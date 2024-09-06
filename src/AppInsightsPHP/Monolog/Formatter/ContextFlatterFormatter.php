@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace AppInsightsPHP\Monolog\Formatter;
 
 use Monolog\Formatter\NormalizerFormatter;
+use Monolog\LogRecord;
 
 final class ContextFlatterFormatter extends NormalizerFormatter
 {
@@ -16,14 +17,15 @@ final class ContextFlatterFormatter extends NormalizerFormatter
         $this->prefix = $prefix;
     }
 
-    public function format($record)
+    public function format(LogRecord $record)
     {
-        if (!\array_key_exists('context', $record) || !\is_array($record['context'])) {
-            return $record;
+        $recordArray = $record->toArray();
+        if (!\array_key_exists('context', $recordArray) || !\is_array($recordArray['context'])) {
+            return $recordArray;
         }
 
-        $formatted = $record;
-        $formatted['context'] = $this->flatterArray($record['context']);
+        $formatted = $recordArray;
+        $formatted['context'] = $this->flatterArray($recordArray['context']);
 
         return $formatted;
     }
